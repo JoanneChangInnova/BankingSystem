@@ -61,10 +61,12 @@ public class Bank implements BankInterface {
     }
 
     public void credit(Long accountNumber, double amount) {
-        BigDecimal currentBalance = BigDecimal.valueOf(getBalance(accountNumber));
-        BigDecimal updatedBalance = currentBalance.add(BigDecimal.valueOf(amount));
-        updatedBalance = updatedBalance.setScale(2, RoundingMode.HALF_UP);
-        updateBalance(accountNumber, updatedBalance.doubleValue());
+        double currentBalance = getBalance(accountNumber);
+        double newBalance = currentBalance + amount;
+        newBalance = Math.round(newBalance * 100) / 100.0;
+
+        updateBalance(accountNumber, newBalance);
+
     }
 
     public boolean debit(Long accountNumber, double amount) {

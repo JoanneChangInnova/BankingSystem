@@ -31,10 +31,6 @@ public abstract class Account {
         return this.pin == attemptedPin;
     }
 
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
-
     public double getBalance() {
         return balance;
     }
@@ -55,5 +51,9 @@ public abstract class Account {
             return true;
         }
         return false;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 }

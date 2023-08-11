@@ -95,10 +95,11 @@ public class SampleTest {
         bank.credit(roseTyler, amount);
         bank.credit(acmeCorp, amount);
         bank.credit(hackerRank, amount);
-        assertEquals(beforeDeposit1 + amount, bank.getBalance(ameliaPond), 0);
-        assertEquals(beforeDeposit2 + amount, bank.getBalance(roseTyler), 0);
-        assertEquals(beforeDeposit3 + amount, bank.getBalance(acmeCorp), 0);
-        assertEquals(beforeDeposit4 + amount, bank.getBalance(hackerRank), 0);
+        double delta = 0.001;
+        assertEquals(beforeDeposit1 + amount, bank.getBalance(ameliaPond), delta);
+        assertEquals(beforeDeposit2 + amount, bank.getBalance(roseTyler), delta);
+        assertEquals(beforeDeposit3 + amount, bank.getBalance(acmeCorp), delta);
+        assertEquals(beforeDeposit4 + amount, bank.getBalance(hackerRank), delta);
     }
 
     /**

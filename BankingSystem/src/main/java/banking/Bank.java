@@ -1,5 +1,7 @@
 package banking;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,9 +11,13 @@ import java.util.Map;
  */
 public class Bank implements BankInterface {
     private Map<Long, Account> accounts;
+    private Map<AccountHolder, Long> accountHolders;
+    private static Long currentAccountNumber = 100000L;
+
 
     public Bank() {
         accounts = new HashMap<>();
+        accountHolders = new HashMap<>();
     }
 
     public Account getAccount(Long accountNumber) {
@@ -20,15 +26,17 @@ public class Bank implements BankInterface {
 
     public Long openCommercialAccount(Company company, int pin, double startingDeposit) {
         Long accountNumber = generateAccountNumber();
-        Account account = new CommercialAccount(company, accountNumber, pin, startingDeposit);
+        CommercialAccount account = new CommercialAccount(company, accountNumber, pin, startingDeposit);
         accounts.put(accountNumber, account);
+        accountHolders.put(company, accountNumber); // Adding the account holder to the mapping
         return accountNumber;
     }
 
     public Long openConsumerAccount(Person person, int pin, double startingDeposit) {
         Long accountNumber = generateAccountNumber();
-        Account account = new ConsumerAccount(person, accountNumber, pin, startingDeposit);
+        ConsumerAccount account = new ConsumerAccount(person, accountNumber, pin, startingDeposit);
         accounts.put(accountNumber, account);
+        accountHolders.put(person, accountNumber); // Adding the account holder to the mapping
         return accountNumber;
     }
 
@@ -37,16 +45,26 @@ public class Bank implements BankInterface {
         return account != null && account.validatePin(pin);
     }
 
+    public double getBalance(AccountHolder accountHolder) {
+        Long accountNumber = accountHolders.get(accountHolder);
+        return getBalance(accountNumber);
+    }
+
     public double getBalance(Long accountNumber) {
-        Account account = accounts.get(accountNumber);
-        return account != null ? account.getBalance() : -1;
+        Account account = getAccount(accountNumber);
+        return account.getBalance();
+    }
+
+    public void credit(AccountHolder accountHolder, double amount) {
+        Long accountNumber = accountHolders.get(accountHolder);
+        credit(accountNumber, amount);
     }
 
     public void credit(Long accountNumber, double amount) {
-        Account account = accounts.get(accountNumber);
-        if (account != null) {
-            account.creditAccount(amount);
-        }
+        BigDecimal currentBalance = BigDecimal.valueOf(getBalance(accountNumber));
+        BigDecimal updatedBalance = currentBalance.add(BigDecimal.valueOf(amount));
+        updatedBalance = updatedBalance.setScale(2, RoundingMode.HALF_UP);
+        updateBalance(accountNumber, updatedBalance.doubleValue());
     }
 
     public boolean debit(Long accountNumber, double amount) {
@@ -54,8 +72,11 @@ public class Bank implements BankInterface {
         return account != null && account.debitAccount(amount);
     }
 
-    private Long generateAccountNumber() {
-        // Logic to generate a unique account number
-        return System.currentTimeMillis(); // Example implementation
+    private synchronized Long generateAccountNumber() {
+        return currentAccountNumber++;
+    }
+
+    protected void updateBalance(Long accountNumber, double newBalance) {
+        accounts.get(accountNumber).setBalance(newBalance);
     }
 }

@@ -1,5 +1,7 @@
 package banking;
 
+import java.math.BigDecimal;
+
 /**
  * Private Variables:<br>
  * {@link #accountNumber}: Long<br>
@@ -31,7 +33,8 @@ public class Transaction implements TransactionInterface{
 
     @Override
     public void credit(double amount) {
-        bank.credit(accountNumber, amount);
+        BigDecimal newBalance = BigDecimal.valueOf(bank.getBalance(accountNumber)).add(BigDecimal.valueOf(amount));
+        bank.updateBalance(accountNumber, newBalance.doubleValue());
     }
 
     @Override

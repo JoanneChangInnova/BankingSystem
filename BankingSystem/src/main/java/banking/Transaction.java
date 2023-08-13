@@ -33,8 +33,7 @@ public class Transaction implements TransactionInterface{
 
     @Override
     public void credit(double amount) {
-        BigDecimal newBalance = BigDecimal.valueOf(bank.getBalance(accountNumber)).add(BigDecimal.valueOf(amount));
-        bank.updateBalance(accountNumber, newBalance.doubleValue());
+        bank.credit(accountNumber, amount);
     }
 
     @Override

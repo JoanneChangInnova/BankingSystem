@@ -10,11 +10,12 @@ package banking;
  * {@link #pin}: int<br>
  * {@link #balance}: double
  */
-public abstract class Account {
+public abstract class Account implements AccountInterface{
     private AccountHolder accountHolder;
     private Long accountNumber;
     private int pin;
-    private double balance;
+    private volatile double balance;
+    private static Long currentAccountNumber = 100000L;
 
     protected Account(AccountHolder accountHolder, Long accountNumber, int pin, double startingDeposit) {
         this.accountHolder = accountHolder;
@@ -39,21 +40,17 @@ public abstract class Account {
         return accountNumber;
     }
 
-    public void creditAccount(double amount) {
+    public synchronized void creditAccount(double amount) {
         if (amount > 0) {
             balance += amount;
         }
     }
 
-    public boolean debitAccount(double amount) {
-        if (amount > 0 && balance >= amount) {
+    public synchronized boolean debitAccount(double amount) {
+        if (amount >= 0 && balance >= amount) {
             balance -= amount;
             return true;
         }
         return false;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
     }
 }

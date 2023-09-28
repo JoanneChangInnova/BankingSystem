@@ -1,12 +1,12 @@
 package banking;
 
-import java.math.BigDecimal;
-
 /**
  * Private Variables:<br>
  * {@link #accountNumber}: Long<br>
  * {@link #bank}: Bank<br>
  */
+
+// use the @Transactional annotation in Spring Framework to ensure that all the steps are completed successfully or none at all
 public class Transaction implements TransactionInterface{
     private Long accountNumber;
     private Bank bank;

@@ -10,19 +10,25 @@ import java.util.concurrent.atomic.AtomicLong;
  * {@link #accounts}: List&lt;Long, Account&gt;
  */
 public class Bank implements BankInterface {
-    // If frequent access to the same accounts is expected, a caching layer could be introduced.
-    // in-memory map of account numbers to Account objects.
+    /**
+     * in-memory map of account numbers to Account objects.
+     * If frequent access to the same accounts is expected, a caching layer could be introduced.
+     */
     private Map<Long, Account> accounts;
 
-    private static Long currentAccountNumber1 = 0L; // a shared counter needs 'synchronized' to handled concurrent update
-    private static AtomicLong currentAccountNumber = new AtomicLong(0L); // ensuring that multiple threads can update the value concurrently without conflicts.
+    /**
+     * Atomic ensures that multiple threads can update the value concurrently without conflicts.
+     */
+    private static AtomicLong currentAccountNumber = new AtomicLong(0L);
 
 
     public Bank() {
-        // LinkedHashMap maintains the order of elements in the way they were inserted
-        // synchronizedMap ensuring thread safety but it can become a bottleneck in a highly concurrent environment.
-        // use ConcurrentHashMap instead, It allows concurrent read and handles write synchronization internally
-        // use ReentrantReadWriteLock's readlock() for every accounts.get(accountNumber); writeLock() for accounts.put()
+        /**
+         * LinkedHashMap maintains the order of elements in the way they were inserted
+         * synchronizedMap ensures thread safety but it can become a bottleneck in a highly concurrent environment.
+         * use ConcurrentHashMap instead, It allows concurrent read and write
+         * use ReentrantReadWriteLock's readlock() for every accounts.get(accountNumber); writeLock() for accounts.put()
+         */
         accounts = Collections.synchronizedMap(new LinkedHashMap<>());
     }
 
@@ -44,6 +50,9 @@ public class Bank implements BankInterface {
         return accountNumber;
     }
 
+    /**
+     * Could add Error Handling: incorrect PIN, account not found
+     */
     public boolean authenticateUser(Long accountNumber, int pin) {
         Account account = accounts.get(accountNumber);
         return account != null && account.validatePin(pin);
@@ -54,10 +63,12 @@ public class Bank implements BankInterface {
         return account.getBalance();
     }
 
-    // Credits the given amount to the specified account.
-    // Since the locks are specific to individual 'accounts', we don't need synchronized to prevent concurrent modifications in bank.credit.
-    // Locks on accounts: the size of the lock is smaller. the chances of threads waiting for locks are reduced, as long as they are operating on different accounts.
-    // If all operations on accounts must acquire a lock at the bank level, it could become a bottleneck, limiting concurrency and potentially impacting performance.
+    /**
+     *  Credits the given amount to the specified account.
+     *  Since the locks are specific to individual 'accounts', we don't need synchronized to prevent concurrent modifications in bank.credit.
+     *  Locks on accounts: the size of the lock is smaller. the chances of threads waiting for locks are reduced, as long as they are operating on different accounts.
+     *  If all operations on accounts must acquire a lock at the bank level, it could become a bottleneck, limiting concurrency and potentially impacting performance.
+     */
     public void credit(Long accountNumber, double amount) {
         Account account = accounts.get(accountNumber);
         if (account == null) {
@@ -66,19 +77,18 @@ public class Bank implements BankInterface {
         account.creditAccount(amount);
     }
 
-    // Debits the given amount from the specified account.
-    // Improvement: Error Handling, this debit function can throws custom InsufficientFundsException
+    /**
+     * Debits the given amount from the specified account.
+     * Improvement: Error Handling, this debit function can throws custom InsufficientFundsException
+     */
     public boolean debit(Long accountNumber, double amount) {
-        // Improvement: logger.info("Debiting amount {} from account {}", amount, accountNumber);
         Account account = accounts.get(accountNumber);
         return account != null && account.debitAccount(amount);
     }
 
-    private synchronized Long generateAccountNumber1() {
-        return currentAccountNumber1++;
-    }
-
-    // it would be more efficient to not use synchronized
+    /**
+     *  it would be more efficient to not use synchronized
+     */
     private Long generateAccountNumber() {
         return currentAccountNumber.getAndIncrement();
     }

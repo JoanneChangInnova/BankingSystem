@@ -26,9 +26,9 @@ public class SampleTest {
      */
     Long acmeCorp;
     /**
-     * The account number for HackerRank
+     * The account number for erRank
      */
-    Long hackerRank;
+    Long aUnion;
 
     @Before
     public void setUp() throws Exception {
@@ -36,11 +36,11 @@ public class SampleTest {
         Person person1ameliaPond = new Person("Amelia", "Pond", 1);
         Person person2roseTyler = new Person("Rose", "Tyler", 2);
         Company company1acmeCorp = new Company("Acme Corp", 1);
-        Company company2hackerRank = new Company("HackerRank", 2);
+        Company company2aUnion = new Company("A Union", 2);
         ameliaPond = bank.openConsumerAccount(person1ameliaPond, 1111, 0.0);
         roseTyler = bank.openConsumerAccount(person2roseTyler, 2222, 456.78);
         acmeCorp = bank.openCommercialAccount(company1acmeCorp, 1111, 0.0);
-        hackerRank = bank.openCommercialAccount(company2hackerRank, 2222, 9876543.21);
+        aUnion = bank.openCommercialAccount(company2aUnion, 2222, 9876543.21);
     }
 
     @After
@@ -49,7 +49,7 @@ public class SampleTest {
         ameliaPond = null;
         roseTyler = null;
         acmeCorp = null;
-        hackerRank = null;
+        aUnion = null;
     }
 
     @Test
@@ -59,14 +59,14 @@ public class SampleTest {
         Assert.assertTrue("2nd and 3rd accounts were not assigned sequential account numbers.",
                 roseTyler + 1 == acmeCorp);
         Assert.assertTrue("3rd and 4th accounts were not assigned sequential account numbers.",
-                acmeCorp + 1 == hackerRank);
+                acmeCorp + 1 == aUnion);
 
         assertEquals(bank.getBalance(ameliaPond), 0.0, 0);
         assertEquals(bank.getBalance(roseTyler), 456.78, 0);
         assertEquals(bank.getBalance(acmeCorp), 0.0, 0);
-        assertEquals(bank.getBalance(hackerRank), 9876543.21, 0);
+        assertEquals(bank.getBalance(aUnion), 9876543.21, 0);
         Assert.assertNotEquals(bank.getBalance(ameliaPond), bank.getBalance(roseTyler));
-        Assert.assertNotEquals(bank.getBalance(acmeCorp), bank.getBalance(hackerRank));
+        Assert.assertNotEquals(bank.getBalance(acmeCorp), bank.getBalance(aUnion));
     }
 
     /**
@@ -78,7 +78,7 @@ public class SampleTest {
         assertFalse("Account " + ameliaPond + " should have insufficient funds.", bank.debit(ameliaPond, amount));
         assertTrue("Account " + roseTyler + " should have sufficient funds.", bank.debit(roseTyler, amount));
         assertFalse("Account " + acmeCorp + " should have insufficient funds.", bank.debit(acmeCorp, amount));
-        assertTrue("Account " + hackerRank + " should have sufficient funds.", bank.debit(hackerRank, amount));
+        assertTrue("Account " + aUnion + " should have sufficient funds.", bank.debit(aUnion, amount));
     }
 
     /**
@@ -90,15 +90,15 @@ public class SampleTest {
         double beforeDeposit1 = bank.getBalance(ameliaPond);
         double beforeDeposit2 = bank.getBalance(roseTyler);
         double beforeDeposit3 = bank.getBalance(acmeCorp);
-        double beforeDeposit4 = bank.getBalance(hackerRank);
+        double beforeDeposit4 = bank.getBalance(aUnion);
         bank.credit(ameliaPond, amount);
         bank.credit(roseTyler, amount);
         bank.credit(acmeCorp, amount);
-        bank.credit(hackerRank, amount);
+        bank.credit(aUnion, amount);
         assertEquals(beforeDeposit1 + amount, bank.getBalance(ameliaPond), 0);
         assertEquals(beforeDeposit2 + amount, bank.getBalance(roseTyler), 0);
         assertEquals(beforeDeposit3 + amount, bank.getBalance(acmeCorp), 0);
-        assertEquals(beforeDeposit4 + amount, bank.getBalance(hackerRank), 0);
+        assertEquals(beforeDeposit4 + amount, bank.getBalance(aUnion), 0);
     }
 
     /**
